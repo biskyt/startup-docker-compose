@@ -1,0 +1,2 @@
+# Startup all docker-compose files in tree, starting at root dir
+@reboot root /usr/local/bin/startup-compose.sh -r /mnt/store1/docker/compose/
