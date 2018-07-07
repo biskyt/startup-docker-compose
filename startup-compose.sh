@@ -43,16 +43,8 @@ case $i in
 esac
 done
 
+# run up on all docker-compose.yml files in tree
+find "${ROOT_DIR}" -maxdepth ${DEPTH} -name "docker-compose.yml" -exec echo up {} ... \; -exec /usr/local/bin/docker-compose -f {} up -d \;
 
-CUR_DIR=$PWD
-
-# move to root dir
-cd ${ROOT_DIR}
-
-# Cleanly stop all running containers using compose
-find -maxdepth ${DEPTH} -name "docker-compose.yml" -exec docker-compose -f {} up -d \;
-
-# move back to original dir
-cd ${CUR_DIR}
 
 exit 0
