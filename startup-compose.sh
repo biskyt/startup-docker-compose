@@ -43,6 +43,9 @@ case $i in
 esac
 done
 
+# give system a chance to boot
+sleep 20
+
 # run up on all docker-compose.yml files in tree
 find "${ROOT_DIR}" -maxdepth ${DEPTH} -name "docker-compose.yml" -exec echo up {} ... \; -exec /usr/local/bin/docker-compose -f {} up -d \;
 
