@@ -12,17 +12,19 @@ DEPTH=2
 
 setroot=0
 setdepth=0
+composecmd=$(which docker-compose)
 
 for i in "$@"
 do
 case $i in
-	--help) echo "USAGE: backupscript -r <ROOT_DIR> [-x <DEPTH>]
+	--help) echo "USAGE: startup-compose.sh -r <ROOT_DIR> [-x <DEPTH>]
       Where:
         ROOT_DIR = the start folder in which to scan for docker-compose.yml files
         DEPTH = How many levels down from the ROOT_DIR to scan for docker-compose files
 
         Run script @reboot using cron
         "
+	exit 0
 		;;
     -r|--root) setroot=1
         ;;
@@ -44,10 +46,13 @@ esac
 done
 
 # give system a chance to boot
+echo "scanning $ROOT_DIR (depth $DEPTH)..."
+echo "using docker-compose at $composecmd"
+echo "waiting to ensure machine has time to boot..."
 sleep 20
 
 # run up on all docker-compose.yml files in tree
-find "${ROOT_DIR}" -maxdepth ${DEPTH} -name "docker-compose.yml" -exec echo up {} ... \; -exec /usr/local/bin/docker-compose -f {} up -d \;
+find "${ROOT_DIR}" -maxdepth ${DEPTH} -name "docker-compose.yml" -exec echo up {} ... \; -exec $composecmd -f {} up -d \;
 
 
 exit 0
