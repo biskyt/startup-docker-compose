@@ -33,13 +33,13 @@ for i in "$@"; do
     setdepth=1
     ;;
   *)
-    if [ ! -z "$i" ]; then
+    if [ -n "$i" ]; then
       if [ "$setroot" = "1" ]; then
         ROOT_DIR=$i
         setroot=0
       elif [ "$setdepth" == "1" ]; then
         DEPTH=$i
-        setdest=0
+        setdepth=0
       else
         echo "Unknown command line: $i"
         exit 1
@@ -52,11 +52,12 @@ done
 function startup-compose-cmd() {
   echo "Starting $1"
   composecmd=$(which docker-compose)
+  composecmd="${composecmd:-/usr/local/bin/docker-compose}" # deal with which not returning a value
   currentdir=$(pwd)
-  workingdir=$(dirname $1)
-  cd $workingdir || continue
+  workingdir=$(dirname "$1")
+  cd "$workingdir" || return
   $composecmd up -d
-  cd $currentdir || exit 1
+  cd "$currentdir" || exit 1
 }
 
 export -f startup-compose-cmd
@@ -68,6 +69,6 @@ echo "waiting to ensure machine has time to boot..."
 sleep 20
 
 # run up on all docker-compose.yml files in tree
-find "${ROOT_DIR}" -maxdepth ${DEPTH} -name "docker-compose.yml" -exec echo up {} ... \; -exec bash -c 'startup-compose-cmd "$0"' {} \;
+find "${ROOT_DIR}" -maxdepth "${DEPTH}" -name "docker-compose.yml" -exec echo up {} ... \; -exec bash -c 'startup-compose-cmd "$0"' {} \;
 
 exit 0
