@@ -49,6 +49,9 @@ for i in "$@"; do
   esac
 done
 
+systemctl restart docker
+sleep 5
+
 function startup-compose-cmd() {
   echo "Starting $1"
   composecmd=$(which docker-compose)
