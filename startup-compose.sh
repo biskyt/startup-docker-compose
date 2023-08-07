@@ -55,7 +55,10 @@ sleep 5
 function startup-compose-cmd() {
   echo "Starting $1"
   composecmd=$(which docker-compose)
-  composecmd="${composecmd:-/usr/local/bin/docker-compose}" # deal with which not returning a value
+  if [ -z $composecmd ]; then
+    composecmd="$(which docker) compose"
+  fi
+  composecmd="${composecmd:-/usr/local/bin/docker compose}" # deal with which not returning a value
   currentdir=$(pwd)
   workingdir=$(dirname "$1")
   cd "$workingdir" || return
